@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactSanDha</title>
+
+<style>
+
+/* GENERAL */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:black;
+color:white;
+}
+
+/* HEADER / NAVBAR */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:#111;
+border-bottom:3px solid #FFD700;
+
+/* Sticky navbar */
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo-container{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo-container img{
+width:40px;
+height:40px;
+object-fit:contain;
+}
+
+.logo-text{
+font-size:22px;
+font-weight:bold;
+color:#FFD700;
+}
+
+nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#FFD700;
+}
+
+/* HERO */
+
+.hero{
+height:500px;
+
+/* Background image */
+
+background-image:url("Coverpage.png");
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+}
+
+/* SECTIONS */
+
+section{
+padding:70px 10%;
+text-align:center;
+}
+
+h2{
+color:#FFD700;
+margin-bottom:30px;
+font-size:32px;
+}
+
+/* ABOUT */
+
+.about p{
+max-width:800px;
+margin:auto;
+line-height:1.7;
+}
+
+/* SERVICES */
+
+.services{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:30px;
+}
+
+.service-box{
+background:#111;
+padding:30px;
+width:260px;
+border:2px solid #FFD700;
+border-radius:10px;
+transition:0.3s;
+}
+
+.service-box:hover{
+transform:scale(1.05);
+}
+
+/* SOCIAL LINKS */
+
+.platform-links a{
+display:inline-block;
+margin:10px;
+padding:12px 25px;
+background:#FFD700;
+color:black;
+font-weight:bold;
+text-decoration:none;
+border-radius:5px;
+}
+
+.platform-links a:hover{
+background:white;
+}
+
+/* FOUNDERS */
+
+.founder-container{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:40px;
+}
+
+.founder-card{
+background:#111;
+padding:30px;
+width:260px;
+border:2px solid #FFD700;
+border-radius:10px;
+transition:0.3s;
+}
+
+.founder-card:hover{
+transform:scale(1.05);
+}
+
+.founder-card img{
+width:120px;
+height:120px;
+border-radius:50%;
+border:3px solid #FFD700;
+margin-bottom:15px;
+}
+
+/* CONTACT */
+
+.contact p{
+font-size:18px;
+margin-top:20px;
+}
+
+.contact a{
+color:#FFD700;
+font-weight:bold;
+text-decoration:none;
+}
+
+.contact a:hover{
+text-decoration:underline;
+}
+
+/* FOOTER */
+
+footer{
+background:#111;
+padding:20px;
+text-align:center;
+border-top:2px solid #FFD700;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+header{
+flex-direction:column;
+gap:10px;
+}
+
+nav a{
+margin:10px;
+}
+
+.hero h1{
+font-size:34px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+
+<div class="logo-container">
+	<img src="logo.jpeg" alt="Logo">
+	<span class="logo-text">FactSanDha</span>
+</div>
+
+<nav>
+<a href="#">Home</a>
+<a href="#about">About</a>
+<a href="#services">Services</a>
+<a href="#founders">Founders</a>
+<a href="#contact">Contact</a>
+</nav>
+
+</header>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section id="about" class="about">
+
+<h2>About Us</h2>
+
+<p>
+We break down complex science topics into simple, engaging Q&A so anyone can understand them easily. From **1st to 12th standard**, we cover **EVS, physics, chemistry, biology, space, and technology**—from basics to advanced concepts. Discover clear explanations, amazing science facts, and answers to your most curious science questions. 🔬🚀
+</p>
+
+</section>
+
+
+<!-- SERVICES -->
+
+<section id="services">
+
+<h2>Our Services</h2>
+
+<div class="services">
+
+<div class="service-box">
+<h3>Science Articles</h3>
+<p>Easy explanations of complex scientific topics.</p>
+</div>
+
+<div class="service-box">
+<h3>Science Facts</h3>
+<p>Latest discoveries about planets, galaxies and many more.</p>
+</div>
+
+<div class="service-box">
+<h3>Educational Resources</h3>
+<p>Guides and materials for science enthusiasts.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SOCIAL PLATFORMS -->
+
+<section>
+
+<h2>Follow Us</h2>
+
+<div class="platform-links">
+
+<a href="https://youtube.com/@factsandha?si=WmnildZBTjqL0DBL">YouTube</a>
+<a href="https://www.instagram.com/factsandha?igsh=MXhlaWl4ZTwNHBraQ==">Instagram</a>
+<a href="https://www.linkedin.com/in/factsandha">LinkedIn</a>
+
+</div>
+
+</section>
+
+
+<!-- FOUNDERS -->
+
+<section id="founders">
+
+<h2>Our Founders</h2>
+
+<div class="founder-container">
+
+<div class="founder-card">
+
+<img src="Dhanashree.jpeg" alt="Founder 1">
+
+<h3>Ms. Dhanashree Ambadkar</h3>
+<br>
+<p>Technology expert and science enthusiast</p>
+
+</div>
+
+<div class="founder-card">
+
+<img src="Sanskruti.jpeg" alt="Founder 2">
+
+<h3>Mrs. Sanskruti Kakkad</h3>
+<br>
+<p>Technology expert focused on innovation and science communication.</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CONTACT -->
+
+<section id="contact" class="contact">
+
+<h2>Contact Us</h2>
+
+<p>
+Email us at:
+<br><br>
+<a href="mailto:factsandha2025@gmail.com">factsandha2025@gmail.com</a>
+</p>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<p>© 2026 FactSanDha | All Rights Reserved</p>
+
+</footer>
+
+</body>
+</html>
