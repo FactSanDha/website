@@ -1,365 +1,971 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FactSanDha</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FactSanDha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
+    :root {
+      --black:       #080808;
+      --black-2:     #0f0f0f;
+      --black-3:     #161616;
+      --black-4:     #1e1e1e;
+      --gold-deep:   #9a6e00;
+      --gold:        #c9930a;
+      --gold-mid:    #e3ab1a;
+      --gold-bright: #f5c842;
+      --gold-light:  #fde88a;
+      --white:       #f5f0e8;
+      --white-dim:   #b8b0a0;
+    }
 
-/* GENERAL */
+    html { scroll-behavior: smooth; }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
-}
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
 
-body{
-background:black;
-color:white;
-}
+    /* ── Custom Cursor ── */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--gold-bright);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.1s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--gold-mid);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.25s ease, opacity 0.3s;
+      transform: translate(-50%, -50%);
+      opacity: 0.6;
+    }
 
-/* HEADER / NAVBAR */
+    /* ── Grain Overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 1000;
+    }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 60px;
-background:#111;
-border-bottom:3px solid #FFD700;
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black-2); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
 
-/* Sticky navbar */
-position:sticky;
-top:0;
-z-index:1000;
-}
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 4rem;
+      background: rgba(8,8,8,0.6);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(201,147,10,0.12);
+      transition: padding 0.4s ease;
+    }
+    nav.scrolled { padding: 0.8rem 4rem; }
 
-.logo-container{
-display:flex;
-align-items:center;
-gap:10px;
-}
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.9rem;
+    }
+    .nav-logo img {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold-mid);
+      object-fit: cover;
+      filter: sepia(0.2) brightness(1.05);
+    }
+    .nav-logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
 
-.logo-container img{
-width:40px;
-height:40px;
-object-fit:contain;
-}
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--white-dim); text-decoration: none;
+      position: relative; transition: color 0.3s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px; background: var(--gold-bright);
+      transition: width 0.4s ease;
+    }
+    .nav-links a:hover { color: var(--gold-bright); }
+    .nav-links a:hover::after { width: 100%; }
 
-.logo-text{
-font-size:22px;
-font-weight:bold;
-color:#FFD700;
-}
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      position: relative; overflow: hidden;
+      padding: 8rem 2rem 4rem;
+    }
 
-nav a{
-margin-left:25px;
-text-decoration:none;
-color:white;
-font-weight:bold;
-}
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,147,10,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(154,110,0,0.05) 0%, transparent 60%),
+        var(--black);
+    }
 
-nav a:hover{
-color:#FFD700;
-}
+    /* Geometric lines */
+    .hero-lines {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .hero-lines svg {
+      position: absolute; width: 100%; height: 100%; opacity: 0.06;
+    }
 
-/* HERO */
+    /* Floating orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+      animation: orb-float 8s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,147,10,0.15), transparent 70%);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(245,200,66,0.1), transparent 70%);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+    @keyframes orb-float {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50%       { transform: translate(30px,-40px) scale(1.05); }
+    }
 
-.hero{
-height:500px;
+    .hero-tag {
+      position: relative;
+      font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--gold-mid);
+      margin-bottom: 1.8rem;
+      display: inline-flex; align-items: center; gap: 1rem;
+      opacity: 0; animation: fade-up 0.8s 0.3s forwards;
+    }
+    .hero-tag::before, .hero-tag::after {
+      content: ''; flex: 1; width: 50px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-mid));
+    }
+    .hero-tag::after { background: linear-gradient(to left, transparent, var(--gold-mid)); }
 
-/* Background image */
+    .hero-title {
+      position: relative;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: 300; line-height: 0.95;
+      letter-spacing: -0.01em;
+      opacity: 0; animation: fade-up 1s 0.5s forwards;
+    }
+    .hero-title .accent {
+      font-style: italic; font-weight: 600;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-bright) 40%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-title .line2 { display: block; margin-top: 0.1em; }
 
-background-image:url("Coverpage.png");
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-}
+    .hero-sub {
+      position: relative;
+      max-width: 560px; margin: 2.5rem auto 3.5rem;
+      font-size: 0.85rem; line-height: 2;
+      letter-spacing: 0.06em; color: var(--white-dim);
+      opacity: 0; animation: fade-up 0.9s 0.8s forwards;
+    }
 
-/* SECTIONS */
+    .hero-ctas {
+      display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: fade-up 0.8s 1s forwards;
+    }
+    .btn-gold {
+      padding: 0.95rem 2.4rem;
+      background: linear-gradient(135deg, var(--gold-mid), var(--gold-bright));
+      color: var(--black); font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.25em;
+      text-transform: uppercase; text-decoration: none; border: none;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 30px rgba(201,147,10,0.25);
+    }
+    .btn-gold::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,0.15);
+      transform: translateX(-100%) skewX(-15deg);
+      transition: transform 0.5s ease;
+    }
+    .btn-gold:hover::before { transform: translateX(120%) skewX(-15deg); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(201,147,10,0.4); }
 
-section{
-padding:70px 10%;
-text-align:center;
-}
+    .btn-outline {
+      padding: 0.95rem 2.4rem;
+      background: transparent;
+      border: 1px solid rgba(201,147,10,0.45);
+      color: var(--gold-bright); font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.25em;
+      text-transform: uppercase; text-decoration: none;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold-bright);
+      background: rgba(201,147,10,0.07);
+      transform: translateY(-2px);
+    }
 
-h2{
-color:#FFD700;
-margin-bottom:30px;
-font-size:32px;
-}
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0; animation: fade-up 0.8s 1.5s forwards;
+    }
+    .scroll-hint span { font-size: 0.55rem; letter-spacing: 0.35em; color: var(--gold-deep); text-transform: uppercase; }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold-mid), transparent);
+      animation: scroll-pulse 2s ease-in-out infinite;
+    }
+    @keyframes scroll-pulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.2); transform-origin: top; }
+    }
 
-/* ABOUT */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-.about p{
-max-width:800px;
-margin:auto;
-line-height:1.7;
-}
+    /* ── SECTION COMMONS ── */
+    section { padding: 8rem 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
 
-/* SERVICES */
+    .section-label {
+      font-size: 0.6rem; letter-spacing: 0.45em; text-transform: uppercase;
+      color: var(--gold-mid); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-label::before {
+      content: ''; width: 30px; height: 1px;
+      background: var(--gold-mid);
+    }
 
-.services{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:30px;
-}
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 300; line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .section-title em {
+      font-style: italic; color: var(--gold-bright);
+    }
 
-.service-box{
-background:#111;
-padding:30px;
-width:260px;
-border:2px solid #FFD700;
-border-radius:10px;
-transition:0.3s;
-}
+    /* ── ABOUT ── */
+    #about { background: var(--black-2); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+    .about-left {}
+    .about-body {
+      font-size: 0.9rem; line-height: 2.1;
+      color: var(--white-dim); margin-bottom: 2rem;
+    }
+    .about-body strong { color: var(--gold-bright); font-weight: 400; }
 
-.service-box:hover{
-transform:scale(1.05);
-}
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .stat-box {
+      padding: 1.5rem 1rem;
+      border: 1px solid rgba(201,147,10,0.15);
+      text-align: center;
+      background: rgba(201,147,10,0.03);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .stat-box:hover {
+      border-color: rgba(201,147,10,0.4);
+      background: rgba(201,147,10,0.07);
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem; font-weight: 600;
+      color: var(--gold-bright);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--white-dim);
+      margin-top: 0.4rem;
+    }
 
-/* SOCIAL LINKS */
+    .about-right {
+      position: relative;
+    }
+    .about-visual {
+      position: relative; aspect-ratio: 4/5;
+      max-width: 420px; margin: 0 auto;
+    }
+    .about-visual::before {
+      content: '';
+      position: absolute; inset: -1px;
+      background: linear-gradient(135deg, var(--gold-mid), transparent 50%, var(--gold-deep));
+      z-index: 0;
+      animation: border-spin 6s linear infinite;
+    }
+    @keyframes border-spin {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+    .about-inner {
+      position: relative; z-index: 1;
+      background: var(--black-3);
+      margin: 1px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: calc(100% - 2px);
+      padding: 3rem 2rem; text-align: center;
+    }
+    .about-icon {
+      font-size: 5rem; line-height: 1;
+      filter: saturate(1.5);
+      margin-bottom: 1.5rem;
+    }
+    .about-inner-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-style: italic;
+      color: var(--white-dim); line-height: 1.6;
+    }
+    .about-inner-text em { color: var(--gold-bright); font-style: normal; }
 
-.platform-links a{
-display:inline-block;
-margin:10px;
-padding:12px 25px;
-background:#FFD700;
-color:black;
-font-weight:bold;
-text-decoration:none;
-border-radius:5px;
-}
+    .subjects {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .subject-tag {
+      padding: 0.3rem 0.9rem;
+      border: 1px solid rgba(201,147,10,0.3);
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gold-mid);
+      background: rgba(201,147,10,0.04);
+    }
 
-.platform-links a:hover{
-background:white;
-}
+    /* ── SERVICES ── */
+    #services {
+      background: var(--black);
+      position: relative; overflow: hidden;
+    }
+    #services::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-deep), transparent);
+    }
 
-/* FOUNDERS */
+    .services-header { text-align: center; margin-bottom: 5rem; }
+    .services-header .section-label { justify-content: center; }
+    .services-header .section-label::before { display: none; }
 
-.founder-container{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:40px;
-}
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: rgba(201,147,10,0.1);
+    }
+    .service-card {
+      background: var(--black-2);
+      padding: 3.5rem 2.5rem;
+      position: relative; overflow: hidden;
+      transition: background 0.4s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(to right, var(--gold-deep), var(--gold-bright));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    .service-card:hover { background: var(--black-3); }
+    .service-card:hover::before { transform: scaleX(1); }
 
-.founder-card{
-background:#111;
-padding:30px;
-width:260px;
-border:2px solid #FFD700;
-border-radius:10px;
-transition:0.3s;
-}
+    .service-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; font-weight: 700;
+      color: rgba(201,147,10,0.07);
+      line-height: 1; margin-bottom: -1.5rem;
+      transition: color 0.4s;
+    }
+    .service-card:hover .service-number { color: rgba(201,147,10,0.13); }
 
-.founder-card:hover{
-transform:scale(1.05);
-}
+    .service-icon {
+      font-size: 2.2rem; margin-bottom: 1.2rem; display: block;
+    }
+    .service-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+    .service-desc {
+      font-size: 0.8rem; line-height: 1.9;
+      color: var(--white-dim); letter-spacing: 0.04em;
+    }
 
-.founder-card img{
-width:120px;
-height:120px;
-border-radius:50%;
-border:3px solid #FFD700;
-margin-bottom:15px;
-}
+    /* ── SOCIAL ── */
+    #social {
+      background: var(--black-2);
+      padding: 5rem 2rem;
+    }
+    .social-inner {
+      max-width: 900px; margin: 0 auto; text-align: center;
+    }
+    .social-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 300; color: var(--white-dim);
+      margin-bottom: 3rem;
+      letter-spacing: 0.03em;
+    }
+    .social-title em { font-style: italic; color: var(--gold-bright); }
 
-/* CONTACT */
+    .social-links {
+      display: flex; gap: 1.5rem;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .social-link {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 1rem 2rem;
+      border: 1px solid rgba(201,147,10,0.2);
+      color: var(--white-dim); text-decoration: none;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      transition: all 0.35s;
+      position: relative; overflow: hidden;
+    }
+    .social-link-icon { font-size: 1.2rem; }
+    .social-link::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,147,10,0.1), transparent);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .social-link:hover {
+      border-color: var(--gold-mid);
+      color: var(--gold-bright);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(201,147,10,0.12);
+    }
+    .social-link:hover::after { opacity: 1; }
 
-.contact p{
-font-size:18px;
-margin-top:20px;
-}
+    /* ── FOUNDERS ── */
+    #founders {
+      background: var(--black);
+      position: relative;
+    }
+    #founders::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-deep), transparent);
+    }
 
-.contact a{
-color:#FFD700;
-font-weight:bold;
-text-decoration:none;
-}
+    .founders-header { text-align: center; margin-bottom: 5rem; }
+    .founders-header .section-label { justify-content: center; }
+    .founders-header .section-label::before { display: none; }
 
-.contact a:hover{
-text-decoration:underline;
-}
+    .founders-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; max-width: 900px; margin: 0 auto;
+    }
+    .founder-card {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+    }
+    .founder-img-wrap {
+      position: relative;
+      width: 200px; height: 200px; margin-bottom: 2rem;
+    }
+    .founder-img-wrap::before {
+      content: '';
+      position: absolute; inset: -3px;
+      background: conic-gradient(var(--gold-bright) 0%, var(--gold-deep) 25%, transparent 50%, var(--gold-mid) 75%, var(--gold-bright) 100%);
+      border-radius: 50%;
+      animation: spin-ring 8s linear infinite;
+    }
+    @keyframes spin-ring {
+      to { transform: rotate(360deg); }
+    }
+    .founder-img-wrap::after {
+      content: ''; position: absolute; inset: -2px;
+      background: var(--black); border-radius: 50%;
+      margin: 2px;
+    }
+    .founder-img-wrap img {
+      position: relative; z-index: 2;
+      width: 100%; height: 100%;
+      border-radius: 50%; object-fit: cover;
+      filter: grayscale(0.2) contrast(1.05);
+    }
+    .founder-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem; font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .founder-role {
+      font-size: 0.65rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--gold-mid);
+      margin-bottom: 1rem;
+    }
+    .founder-bio {
+      font-size: 0.8rem; line-height: 1.9;
+      color: var(--white-dim); letter-spacing: 0.03em;
+    }
 
-/* FOOTER */
+    .founder-divider {
+      display: flex; align-items: center;
+      position: absolute; top: 50%; right: -1.5rem;
+      transform: translateY(-50%);
+      height: 60%; flex-direction: column;
+    }
+    .founder-divider-line {
+      flex: 1; width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--gold-deep), transparent);
+    }
+    .founder-divider-gem {
+      width: 6px; height: 6px;
+      background: var(--gold-mid); transform: rotate(45deg);
+    }
 
-footer{
-background:#111;
-padding:20px;
-text-align:center;
-border-top:2px solid #FFD700;
-}
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--black-2);
+      position: relative; overflow: hidden;
+    }
+    .contact-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 50% 100%, rgba(201,147,10,0.06), transparent);
+    }
 
-/* MOBILE */
+    .contact-inner {
+      position: relative; text-align: center; max-width: 700px; margin: 0 auto;
+    }
+    .contact-inner .section-label { justify-content: center; }
+    .contact-inner .section-label::before { display: none; }
 
-@media(max-width:768px){
+    .contact-body {
+      font-size: 0.85rem; line-height: 2;
+      color: var(--white-dim); margin-bottom: 3rem;
+    }
 
-header{
-flex-direction:column;
-gap:10px;
-}
+    .contact-email-wrap {
+      display: inline-block;
+      position: relative;
+      margin-bottom: 3rem;
+    }
+    .contact-email-wrap::before, .contact-email-wrap::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-mid), transparent);
+    }
+    .contact-email-wrap::before { top: 0; }
+    .contact-email-wrap::after { bottom: 0; }
+    .contact-email {
+      display: block; padding: 1.5rem 3rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 400; font-style: italic;
+      color: var(--gold-bright); text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+    .contact-email:hover { color: var(--gold-light); }
 
-nav a{
-margin:10px;
-}
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(201,147,10,0.1);
+      padding: 3rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 600;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .footer-copy {
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      color: var(--gold-deep); text-align: center;
+    }
+    .footer-gem {
+      display: flex; gap: 0.5rem; align-items: center;
+    }
+    .gem {
+      width: 5px; height: 5px;
+      background: var(--gold-mid); transform: rotate(45deg);
+      opacity: 0.5;
+    }
+    .gem.active { opacity: 1; background: var(--gold-bright); }
 
-.hero h1{
-font-size:34px;
-}
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.35s; }
+    .reveal-delay-4 { transition-delay: 0.5s; }
 
-}
-
-</style>
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      nav.scrolled { padding: 0.8rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-right { display: none; }
+      .services-grid { grid-template-columns: 1fr; gap: 1.5px; }
+      .founders-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .founder-divider { display: none; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.2rem; }
+      nav.scrolled { padding: 0.7rem 1.2rem; }
+      .nav-links { display: none; }
+      .about-stats { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-<header>
+  <!-- NAV -->
+  <nav id="mainNav">
+    <div class="nav-logo">
+      <img src="https://factsandha.github.io/website/logo.jpeg" alt="FactSanDha Logo" />
+      <span class="nav-logo-text">FactSanDha</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#founders">Founders</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
-<div class="logo-container">
-	<img src="logo.jpeg" alt="Logo">
-	<span class="logo-text">FactSanDha</span>
-</div>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
 
-<nav>
-<a href="#">Home</a>
-<a href="#about">About</a>
-<a href="#services">Services</a>
-<a href="#founders">Founders</a>
-<a href="#contact">Contact</a>
-</nav>
+    <div class="hero-lines">
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="200" x2="1440" y2="200" stroke="#c9930a" stroke-width="0.5"/>
+        <line x1="0" y1="600" x2="1440" y2="600" stroke="#c9930a" stroke-width="0.5"/>
+        <line x1="300" y1="0" x2="300" y2="800" stroke="#c9930a" stroke-width="0.5"/>
+        <line x1="1140" y1="0" x2="1140" y2="800" stroke="#c9930a" stroke-width="0.5"/>
+        <rect x="300" y="200" width="840" height="400" stroke="#c9930a" stroke-width="0.5" fill="none"/>
+        <circle cx="720" cy="400" r="280" stroke="#c9930a" stroke-width="0.5" fill="none"/>
+        <circle cx="720" cy="400" r="180" stroke="#c9930a" stroke-width="0.3" fill="none"/>
+      </svg>
+    </div>
 
-</header>
+    <div class="hero-tag">Science Simplified</div>
 
+    <h1 class="hero-title">
+      <span>FactSan</span><span class="accent">Dha</span>
+      <span class="line2">Where Curiosity<br>Meets <em class="accent">Clarity</em></span>
+    </h1>
 
-<!-- HERO -->
+    <p class="hero-sub">
+      Breaking down complex science into simple, elegant stories —
+      from 1st standard to 12th and beyond. Physics, Chemistry, Biology, Space & Technology.
+    </p>
 
-<section class="hero">
+    <div class="hero-ctas">
+      <a href="#services" class="btn-gold">Explore Our Work</a>
+      <a href="#contact" class="btn-outline">Get In Touch</a>
+    </div>
 
-</section>
+    <div class="scroll-hint">
+      <span>Discover</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
 
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-left">
+          <div class="section-label reveal">Our Story</div>
+          <h2 class="section-title reveal reveal-delay-1">
+            Science for <em>Every</em><br>Curious Mind
+          </h2>
+          <p class="about-body reveal reveal-delay-2">
+            We break down complex science topics into simple, engaging Q&amp;A so
+            <strong>anyone can understand them</strong> easily. From <strong>1st to 12th standard</strong>,
+            we cover EVS, physics, chemistry, biology, space, and technology — from the very basics
+            to advanced concepts that spark genuine wonder.
+          </p>
+          <p class="about-body reveal reveal-delay-2">
+            Discover clear explanations, amazing science facts, and answers to your most curious
+            questions — delivered with precision and passion.
+          </p>
 
-<!-- ABOUT -->
+          <div class="subjects reveal reveal-delay-3">
+            <span class="subject-tag">Physics</span>
+            <span class="subject-tag">Chemistry</span>
+            <span class="subject-tag">Biology</span>
+            <span class="subject-tag">EVS</span>
+            <span class="subject-tag">Space</span>
+            <span class="subject-tag">Technology</span>
+          </div>
 
-<section id="about" class="about">
+          <div class="about-stats reveal reveal-delay-4">
+            <div class="stat-box">
+              <div class="stat-num">12</div>
+              <div class="stat-label">Grade Levels</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">6+</div>
+              <div class="stat-label">Subjects</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">∞</div>
+              <div class="stat-label">Curiosity</div>
+            </div>
+          </div>
+        </div>
 
-<h2>About Us</h2>
+        <div class="about-right reveal reveal-delay-2">
+          <div class="about-visual">
+            <div class="about-inner">
+              <div class="about-icon">🔬</div>
+              <div class="about-inner-text">
+                "Every answer opens<br>a door to <em>ten new questions</em>"
+              </div>
+              <div style="width:40px;height:1px;background:var(--gold-mid);margin:1.5rem auto;opacity:0.4;"></div>
+              <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-deep);">FactSanDha Ethos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<p>
-We break down complex science topics into simple, engaging Q&A so anyone can understand them easily. From **1st to 12th standard**, we cover **EVS, physics, chemistry, biology, space, and technology**—from basics to advanced concepts. Discover clear explanations, amazing science facts, and answers to your most curious science questions. 🔬🚀
-</p>
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header">
+        <div class="section-label reveal">What We Offer</div>
+        <h2 class="section-title reveal reveal-delay-1">
+          Our <em>Services</em>
+        </h2>
+      </div>
 
-</section>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-number">01</div>
+          <span class="service-icon">📄</span>
+          <div class="service-name">Science Articles</div>
+          <p class="service-desc">
+            Meticulously crafted explanations of complex scientific topics, written
+            with clarity and depth so learners of all ages can grasp the wonder of science.
+          </p>
+        </div>
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-number">02</div>
+          <span class="service-icon">🚀</span>
+          <div class="service-name">Science Facts</div>
+          <p class="service-desc">
+            The latest discoveries about planets, galaxies, black holes, and breakthroughs —
+            curated to keep your scientific curiosity perpetually ignited.
+          </p>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-number">03</div>
+          <span class="service-icon">📚</span>
+          <div class="service-name">Educational Resources</div>
+          <p class="service-desc">
+            Carefully designed guides and study materials for science enthusiasts and students,
+            from foundational EVS to advanced physics and beyond.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- SOCIAL / FOLLOW US -->
+  <section id="social">
+    <div class="social-inner">
+      <h2 class="social-title reveal">
+        Follow the <em>Journey</em>
+      </h2>
+      <div class="social-links">
+        <a href="https://youtube.com/@factsandha?si=WmnildZBTjqL0DBL" class="social-link reveal" target="_blank" rel="noopener">
+          <span class="social-link-icon">▶</span>
+          <span>YouTube</span>
+        </a>
+        <a href="https://www.instagram.com/factsandha?igsh=MXhlaWl4ZTwNHBraQ==" class="social-link reveal reveal-delay-1" target="_blank" rel="noopener">
+          <span class="social-link-icon">◈</span>
+          <span>Instagram</span>
+        </a>
+        <a href="https://www.linkedin.com/in/factsandha" class="social-link reveal reveal-delay-2" target="_blank" rel="noopener">
+          <span class="social-link-icon">◉</span>
+          <span>LinkedIn</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
-<!-- SERVICES -->
+  <!-- FOUNDERS -->
+  <section id="founders">
+    <div class="container">
+      <div class="founders-header">
+        <div class="section-label reveal">The Team</div>
+        <h2 class="section-title reveal reveal-delay-1">Our <em>Founders</em></h2>
+      </div>
 
-<section id="services">
+      <div class="founders-grid">
+        <div class="founder-card reveal">
+          <div class="founder-img-wrap">
+            <img src="https://factsandha.github.io/website/Dhanashree.jpeg" alt="Ms. Dhanashree Ambadkar" />
+          </div>
+          <div class="founder-name">Ms. Dhanashree Ambadkar</div>
+          <div class="founder-role">Co-Founder & Technology Expert</div>
+          <p class="founder-bio">A technology expert and science enthusiast dedicated to making complex scientific concepts accessible and engaging for every learner.</p>
+          <div class="founder-divider">
+            <div class="founder-divider-line"></div>
+            <div class="founder-divider-gem"></div>
+            <div class="founder-divider-line"></div>
+          </div>
+        </div>
 
-<h2>Our Services</h2>
+        <div class="founder-card reveal reveal-delay-2">
+          <div class="founder-img-wrap">
+            <img src="https://factsandha.github.io/website/Sanskruti.jpeg" alt="Mrs. Sanskruti Kakkad" />
+          </div>
+          <div class="founder-name">Mrs. Sanskruti Kakkad</div>
+          <div class="founder-role">Co-Founder & Innovation Lead</div>
+          <p class="founder-bio">Technology expert focused on innovation and science communication, bridging the gap between complex research and everyday understanding.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="services">
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-bg"></div>
+    <div class="container">
+      <div class="contact-inner">
+        <div class="section-label reveal">Get In Touch</div>
+        <h2 class="section-title reveal reveal-delay-1">
+          Let's <em>Connect</em>
+        </h2>
+        <p class="contact-body reveal reveal-delay-2">
+          Have a question? A science topic you'd love us to explore?<br>
+          We'd be delighted to hear from curious minds.
+        </p>
+        <div class="contact-email-wrap reveal reveal-delay-3">
+          <a href="mailto:factsandha2025@gmail.com" class="contact-email">
+            factsandha2025@gmail.com
+          </a>
+        </div>
+        <div class="reveal reveal-delay-4">
+          <a href="mailto:factsandha2025@gmail.com" class="btn-gold">Send a Message</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="service-box">
-<h3>Science Articles</h3>
-<p>Easy explanations of complex scientific topics.</p>
-</div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">FactSanDha</div>
+      <div class="footer-copy">
+        © 2026 FactSanDha &nbsp;·&nbsp; All Rights Reserved<br>
+        <span style="font-size:0.55rem;opacity:0.5;">Crafted with passion for science</span>
+      </div>
+      <div class="footer-gem">
+        <div class="gem"></div>
+        <div class="gem active"></div>
+        <div class="gem"></div>
+      </div>
+    </div>
+  </footer>
 
-<div class="service-box">
-<h3>Science Facts</h3>
-<p>Latest discoveries about planets, galaxies and many more.</p>
-</div>
+  <script>
+    // Custom Cursor
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      dot.style.left  = mx + 'px';
+      dot.style.top   = my + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.style.transform = 'translate(-50%,-50%) scale(1.8)');
+      el.addEventListener('mouseleave', () => ring.style.transform = 'translate(-50%,-50%) scale(1)');
+    });
 
-<div class="service-box">
-<h3>Educational Resources</h3>
-<p>Guides and materials for science enthusiasts.</p>
-</div>
+    // Sticky Nav
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
 
-</div>
-
-</section>
-
-
-<!-- SOCIAL PLATFORMS -->
-
-<section>
-
-<h2>Follow Us</h2>
-
-<div class="platform-links">
-
-<a href="https://youtube.com/@factsandha?si=WmnildZBTjqL0DBL">YouTube</a>
-<a href="https://www.instagram.com/factsandha?igsh=MXhlaWl4ZTwNHBraQ==">Instagram</a>
-<a href="https://www.linkedin.com/in/factsandha">LinkedIn</a>
-
-</div>
-
-</section>
-
-
-<!-- FOUNDERS -->
-
-<section id="founders">
-
-<h2>Our Founders</h2>
-
-<div class="founder-container">
-
-<div class="founder-card">
-
-<img src="Dhanashree.jpeg" alt="Founder 1">
-
-<h3>Ms. Dhanashree Ambadkar</h3>
-<br>
-<p>Technology expert and science enthusiast</p>
-
-</div>
-
-<div class="founder-card">
-
-<img src="Sanskruti.jpeg" alt="Founder 2">
-
-<h3>Mrs. Sanskruti Kakkad</h3>
-<br>
-<p>Technology expert focused on innovation and science communication.</p>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- CONTACT -->
-
-<section id="contact" class="contact">
-
-<h2>Contact Us</h2>
-
-<p>
-Email us at:
-<br><br>
-<a href="mailto:factsandha2025@gmail.com">factsandha2025@gmail.com</a>
-</p>
-
-</section>
-
-
-<!-- FOOTER -->
-
-<footer>
-
-<p>© 2026 FactSanDha | All Rights Reserved</p>
-
-</footer>
-
+    // Scroll Reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
